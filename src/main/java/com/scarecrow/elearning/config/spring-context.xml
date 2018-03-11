@@ -4,7 +4,7 @@
     xmlns:aop="http://www.springframework.org/schema/aop"
     xmlns:tx="http://www.springframework.org/schema/tx"
     xsi:schemaLocation="
-        http://www.springframework.org/schema/beans
+    	http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context.xsd
@@ -15,6 +15,48 @@
         
         
 	<context:property-placeholder location="classpath*:config/jdbc.properties"/>
+	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+		<!-- 基本属性 url,user,pass -->
+		<property name="driverClass" value="${jdbc.driver}"/>
+		<property name="url" value="${jdbc.url}"/>
+		<property name="username" value="${jdbc.username}"/>
+		<property name="password" value="${jdbc.password}"/>
+		<!-- 配置初始化大小,最小增长,最大活动连接 -->
+		<property name="initialSize" value="${jdbc.initialSize}"/>
+		<property name="minIdle" value="${jdbc.minIdle}"/>
+		<property name="maxActive" value="${jdbc.maxActive}"/>
+		<!-- 获取连接超时时间,单位毫秒 -->
+		<property name="maxWait" value="${jdbc.maxWait}"/>
+		
+		<!-- 设置间隔多久进行一次检查关闭空闲链接,单位毫秒 -->
+		<property name="timeBetweenEvictionRunsMillis" value="${jdbc.timeBetweenEvictionRunsMillis}"/>
+		
+		<!-- 设置每个连接在池中的最小生存时间,单位毫秒 -->
+		<property name="minEvictableIdleTimeMillis" value="${jdbc.minEvictableIdleTimeMillis}"/>
+		
+		<property name="validationQuery" value="SELECT 'x'" />
+        <property name="testWhileIdle" value="true" />
+        <property name="testOnBorrow" value="false" />
+        <property name="testOnReturn" value="false" />
+        
+        <!-- 打开PSCache，并且指定每个连接上PSCache的大小  如果用Oracle，则把poolPreparedStatements配置为true，mysql可以配置为false。-->
+        <property name="poolPreparedStatements" value="false" />
+        <property name="maxPoolPreparedStatementPerConnectionSize" value="20" />
+
+        <!-- 配置监控统计拦截的filters -->
+        <property name="filters" value="wall,stat" />
+	</bean>
+	
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"/>
+		<property name="configLocation" value="src/main/java/com/scarecrow/elearning/config/sqlMapConfig.xml"></property>
+	</bean>
+	
+	<bean id="userDao" class="com.scarecrow.elearning.uac.dao.UserDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	
+	
     <!-- this is the service object that we want to make transactional -->
 <!--     <bean id="fooService" class="x.y.service.DefaultFooService"/> -->
 
@@ -35,14 +77,6 @@
 <!--         <aop:pointcut id="fooServiceOperation" expression="execution(* x.y.service.FooService.*(..))"/> -->
 <!--         <aop:advisor advice-ref="txAdvice" pointcut-ref="fooServiceOperation"/> -->
 <!--     </aop:config> -->
-
-    <!-- don't forget the DataSource -->
-<!--     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close"> -->
-<!--         <property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"/> -->
-<!--         <property name="url" value="jdbc:oracle:thin:@rj-t42:1521:elvis"/> -->
-<!--         <property name="username" value="scott"/> -->
-<!--         <property name="password" value="tiger"/> -->
-<!--     </bean> -->
 
     <!-- similarly, don't forget the PlatformTransactionManager -->
 <!--     <bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager"> -->
