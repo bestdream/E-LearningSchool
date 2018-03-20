@@ -1,0 +1,23 @@
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.scarecrow.elearning.uac.dao.UserMapper">
+
+	<cache type="org.mybatis.caches.ehcache.EhcacheCache"/>
+
+	<select id="getUserById" parameterType="int" resultType="User" useCache="true">
+		select * from user where id = #{id}
+	</select>
+	
+	<insert id="addUser" parameterType="User">
+		<selectKey order="AFTER" resultType="int" keyProperty="id">
+			select LAST_INSERT_ID()
+		</selectKey>
+		insert into user values(#{id},#{name},#{sex},#{age})
+	</insert>
+	
+<!-- 	<resultMap type="user" id="userResultMap"> -->
+<!-- 		<association property="user" select="getUserById" column="id"></association> -->
+<!-- 	</resultMap> -->
+	
+</mapper>
