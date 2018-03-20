@@ -1,7 +1,13 @@
 package com.scarecrow.elearning.uac.entity;
 
-public class User {
+import java.io.Serializable;
+
+public class User implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 9012380221722216651L;
 	public int id;
 	public String name;
 	public String sex;

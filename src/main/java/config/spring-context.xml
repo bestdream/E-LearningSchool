@@ -19,6 +19,12 @@
 		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
 	</context:component-scan>
 	
+	
+	<!-- spring整合ehcache可以对某些方法或者类进行缓存 -->
+<!-- 	<bean class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"> -->
+<!-- 		<property name="configLocation" value="classpath:ehcache.xml"/> -->
+<!-- 	</bean> -->
+	
 	<context:property-placeholder location="classpath:jdbc.properties"/>
 	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
 		<!-- 基本属性 url,user,pass -->
@@ -54,6 +60,7 @@
 	
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="dataSource" ref="dataSource"/>
+		<property name="configLocation" value="classpath:config/sqlMapConfig.xml"></property>
 		<property name="mapperLocations" value="classpath:com/scarecrow/elearning/uac/resources/*/*Mapper.xml"></property>
 		<property name="typeAliasesPackage" value="com.scarecrow.elearning.uac.entity"></property>
 	</bean>
